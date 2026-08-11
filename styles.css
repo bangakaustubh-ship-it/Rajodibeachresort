@@ -742,6 +742,13 @@ textarea.form-control { padding: 0.9rem 1.1rem; }
    PUBLIC-FACING WEBSITE STYLES
    ========================================================================== */
 
+/* ===== PUBLIC SITE BASE STYLES ===== */
+.public-site {
+  background: var(--bg-obsidian);
+  color: var(--text-primary);
+  overflow-x: hidden;
+}
+
 /* ===== WHATSAPP FLOATING BUTTON ===== */
 .wa-float {
   position: fixed; bottom: 1.75rem; right: 1.75rem; z-index: 999;
