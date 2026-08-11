@@ -3,390 +3,507 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rajodi C Beach Resort | Admin Operations Console</title>
-  <meta name="description" content="Rajodi C Beach Resort – Premium Admin Operations Console for live room bookings, check-in/out management and GST billing.">
+  <title>Rajodi C Beach Resort | Beachside Paradise & Waterpark – Nalasopara</title>
+  <meta name="description" content="Rajodi C Beach Resort & Waterpark – Premium beach resort in Nalasopara West. Rooms, waterpark, weddings, day packages. Book Now!">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body class="public-site">
 
-  <!-- TOAST NOTIFICATION CONTAINER -->
-  <div id="toastContainer" aria-live="polite"></div>
+<!-- WHATSAPP FLOAT BUTTON -->
+<a href="https://wa.me/919022287501" class="wa-float" target="_blank" rel="noopener" aria-label="WhatsApp">
+  <i class="fa-brands fa-whatsapp"></i>
+</a>
 
-  <!-- TOP NAVIGATION BAR -->
-  <nav class="navbar">
-    <div class="container nav-container">
-      <div class="brand-logo">
-        <div class="brand-icon-wrap"><i class="fa-solid fa-hotel"></i></div>
-        <div>
-          <span class="brand-name">RAJODI C BEACH RESORT</span>
-          <span class="brand-subtitle">Admin Operations Console</span>
-        </div>
+<!-- NAVBAR -->
+<nav class="pub-navbar" id="pubNavbar">
+  <div class="container pub-nav-inner">
+    <a href="#home" class="pub-brand">
+      <div class="brand-icon-wrap"><i class="fa-solid fa-umbrella-beach"></i></div>
+      <div>
+        <span class="brand-name">RAJODI C BEACH RESORT</span>
+        <span class="brand-subtitle">& Waterpark</span>
       </div>
-
-      <div class="nav-center">
-        <div class="live-clock" id="liveClock">--:--:--</div>
-        <div class="live-date" id="liveDate">--</div>
-      </div>
-
-      <div class="nav-actions">
-        <span id="accessStatusBadge" class="status-badge badge-booked">
-          <i class="fa-solid fa-lock"></i> System Locked
-        </span>
-        <button id="logoutNavBtn" class="btn btn-outline btn-sm" style="display: none;" onclick="openDayEndSummary()">
-          <i class="fa-solid fa-lock"></i> Lock Console
-        </button>
-      </div>
-    </div>
-  </nav>
-
-  <!-- LOGIN SCREEN -->
-  <main id="loginScreen" class="login-screen-wrap">
-    <div class="container" style="display: flex; justify-content: center;">
-      <div class="login-glass-card">
-        <div class="shield-badge-icon"><i class="fa-solid fa-shield-halved"></i></div>
-        <h2 style="font-size: 1.8rem; color: #fff; margin-bottom: 0.3rem;">Resort Management Portal</h2>
-        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.75rem;">
-          Authorized Admin Staff Only. Enter Security PIN to unlock live room bookings &amp; guest check-in console.
-        </p>
-        <form onsubmit="handleAdminAuth(event)">
-          <div class="form-group">
-            <label class="form-label" for="loginPinInput">Admin Security PIN</label>
-            <div style="position: relative;">
-              <input type="password" id="loginPinInput" class="form-control" placeholder="Enter PIN (Default: 1234)" required autofocus style="padding-left: 2.75rem; font-size: 1.1rem; letter-spacing: 0.25em;">
-              <i class="fa-solid fa-key" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--accent-gold);"></i>
-            </div>
-          </div>
-          <div id="authErrorMsg" class="auth-error-box" style="display: none;">
-            <i class="fa-solid fa-circle-exclamation"></i> Incorrect PIN! Default Staff PIN is <strong style="color: var(--accent-gold);">1234</strong>
-          </div>
-          <button type="submit" class="btn btn-gold" style="width: 100%; padding: 0.85rem; font-size: 1rem;">
-            <i class="fa-solid fa-right-to-bracket"></i> Authenticate &amp; Open Console
-          </button>
-        </form>
-        <div class="login-footer-bar">
-          <span><i class="fa-solid fa-shield-cat text-gold"></i> Encrypted Access</span>
-          <span>PIN: <strong class="text-gold">1234</strong></span>
-        </div>
-      </div>
-    </div>
-  </main>
-
-  <!-- MAIN ADMIN DASHBOARD -->
-  <main id="adminMainDashboard" class="admin-section" style="display: none;">
-    <div class="container">
-
-      <!-- HEADER -->
-      <div class="admin-header-bar">
-        <div class="admin-title-group">
-          <h2>Resort Room Booking &amp; Status Console</h2>
-          <p><i class="fa-solid fa-circle-dot text-gold pulse-dot"></i> Live Room Occupancy, Check-In, Check-Out &amp; GST Tax Billing System</p>
-        </div>
-        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
-          <button class="btn btn-outline btn-sm" onclick="openActivityLog()"><i class="fa-solid fa-list-check"></i> Activity Log</button>
-          <button class="btn btn-outline btn-sm" onclick="resetToInitialState()"><i class="fa-solid fa-rotate-left"></i> Reset Demo</button>
-          <button class="btn btn-danger btn-sm" onclick="openDayEndSummary()"><i class="fa-solid fa-lock"></i> Lock Console</button>
-        </div>
-      </div>
-
-      <!-- STAT CARDS -->
-      <div class="admin-stats-overview">
-        <div class="stat-card-glass stat-card-blue">
-          <div class="stat-card-icon stat-icon-blue"><i class="fa-solid fa-door-open"></i></div>
-          <div class="stat-card-info">
-            <h4>Total Rooms</h4>
-            <div class="stat-number" id="dashTotalRooms">0</div>
-          </div>
-        </div>
-        <div class="stat-card-glass stat-card-green">
-          <div class="stat-card-icon stat-icon-green"><i class="fa-solid fa-circle-check"></i></div>
-          <div class="stat-card-info">
-            <h4>Free (Available)</h4>
-            <div class="stat-number" id="dashFreeRooms">0</div>
-          </div>
-        </div>
-        <div class="stat-card-glass stat-card-red">
-          <div class="stat-card-icon stat-icon-red"><i class="fa-solid fa-bed"></i></div>
-          <div class="stat-card-info">
-            <h4>Booked (Occupied)</h4>
-            <div class="stat-number" id="dashBookedRooms">0</div>
-          </div>
-        </div>
-        <div class="stat-card-glass stat-card-gold">
-          <div class="stat-card-icon stat-icon-gold"><i class="fa-solid fa-indian-rupee-sign"></i></div>
-          <div class="stat-card-info">
-            <h4>Active Stay Revenue</h4>
-            <div class="stat-number" id="dashActiveRevenue">&#8377; 0</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ANALYTICS ROW -->
-      <div class="analytics-row">
-        <!-- Occupancy Ring -->
-        <div class="analytics-card ring-card">
-          <h4 class="analytics-title"><i class="fa-solid fa-chart-pie text-gold"></i> Occupancy Rate</h4>
-          <div class="ring-chart-wrap">
-            <canvas id="occupancyChart" width="180" height="180"></canvas>
-            <div class="ring-center-label">
-              <span id="occupancyPercent">0%</span>
-              <small>Occupied</small>
-            </div>
-          </div>
-          <div class="ring-legend">
-            <span class="legend-dot" style="background: var(--rose-500);"></span> Booked
-            <span class="legend-dot" style="background: var(--emerald-500); margin-left:1rem;"></span> Free
-            <span class="legend-dot" style="background: var(--amber-500); margin-left:1rem;"></span> Cleaning
-          </div>
-        </div>
-
-        <!-- Revenue Chart -->
-        <div class="analytics-card chart-card">
-          <h4 class="analytics-title"><i class="fa-solid fa-chart-bar text-gold"></i> Revenue by Room Type (Active Stays)</h4>
-          <div style="position: relative; height: 200px;">
-            <canvas id="revenueChart"></canvas>
-          </div>
-        </div>
-
-        <!-- Tariff Breakdown -->
-        <div class="analytics-card breakdown-card">
-          <h4 class="analytics-title"><i class="fa-solid fa-layer-group text-gold"></i> Room Category Tariffs</h4>
-          <div class="tariff-list">
-            <div class="tariff-item" style="border-left-color: var(--blue-500);">
-              <strong>Deluxe (101&#8211;105)</strong>
-              <span class="tariff-price text-gold">&#8377;3,000 + GST</span>
-              <small>AC &middot; WiFi &middot; Pool &middot; Tea/Coffee &middot; 2 Persons</small>
-              <em class="tariff-note" style="color: #fca5a5;">*Food Not Included</em>
-            </div>
-            <div class="tariff-item" style="border-left-color: var(--emerald-500);">
-              <strong>Super Deluxe (201&#8211;205)</strong>
-              <span class="tariff-price text-gold">&#8377;3,500 + GST</span>
-              <small>AC &middot; WiFi &middot; Pool &middot; 24hr Hot Water &middot; TV</small>
-            </div>
-            <div class="tariff-item" style="border-left-color: var(--accent-gold);">
-              <strong>Executive Balcony (301&#8211;305)</strong>
-              <span class="tariff-price text-gold">&#8377;5,000 + GST</span>
-              <small>AC &middot; Balcony View &middot; Pool &middot; WiFi &middot; TV</small>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ROOM FILTER TOOLBAR -->
-      <div class="admin-toolbar">
-        <div class="filter-tabs">
-          <button class="filter-tab active" onclick="filterRooms('all', this)"><i class="fa-solid fa-border-all"></i> All <span class="tab-count" id="countAll">15</span></button>
-          <button class="filter-tab" onclick="filterRooms('free', this)"><i class="fa-solid fa-circle" style="color:#34d399;font-size:0.6rem;"></i> Free <span class="tab-count" id="countFree">0</span></button>
-          <button class="filter-tab" onclick="filterRooms('booked', this)"><i class="fa-solid fa-circle" style="color:#fb7185;font-size:0.6rem;"></i> Booked <span class="tab-count" id="countBooked">0</span></button>
-          <button class="filter-tab" onclick="filterRooms('cleaning', this)"><i class="fa-solid fa-circle" style="color:#fbbf24;font-size:0.6rem;"></i> Cleaning <span class="tab-count" id="countCleaning">0</span></button>
-        </div>
-        <div style="position: relative; min-width: 270px;">
-          <input type="text" id="adminSearchInput" class="form-control" placeholder="Search room no or guest name&hellip;" oninput="renderRoomMatrix()" style="padding-left: 2.5rem;">
-          <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 0.9rem; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
-        </div>
-      </div>
-
-      <!-- ROOM MATRIX GRID -->
-      <div class="admin-room-grid" id="adminRoomGrid"></div>
-
-    </div>
-  </main>
-
-  <!-- CHECK-IN MODAL -->
-  <div class="modal-backdrop" id="checkInModal">
-    <div class="modal-box">
-      <div class="modal-header">
-        <h3 class="modal-title"><i class="fa-solid fa-key text-gold"></i> Guest Check-In &amp; Mark Booked</h3>
-        <button class="btn-close" onclick="closeModal('checkInModal')" aria-label="Close">&times;</button>
-      </div>
-      <div class="modal-room-banner">
-        <strong id="ciRoomDisplay">Room 101 - Deluxe Room</strong>
-        <div id="ciRateDisplay" style="color: var(--accent-gold); font-size: 0.88rem; margin-top: 0.2rem;"></div>
-      </div>
-
-      <div class="step-indicator">
-        <div class="step active" id="step1Dot"><span>1</span><small>Guest Info</small></div>
-        <div class="step-line"></div>
-        <div class="step" id="step2Dot"><span>2</span><small>ID Proof</small></div>
-        <div class="step-line"></div>
-        <div class="step" id="step3Dot"><span>3</span><small>Stay Dates</small></div>
-      </div>
-
-      <form onsubmit="submitCheckIn(event)" id="checkInForm">
-        <input type="hidden" id="ciRoomId">
-
-        <div class="form-step" id="formStep1">
-          <div class="form-group">
-            <label class="form-label" for="ciGuestName">Guest Full Name *</label>
-            <div style="position:relative;">
-              <input type="text" id="ciGuestName" class="form-control" placeholder="e.g. Vikramaditya Singh" required style="padding-left:2.5rem;">
-              <i class="fa-solid fa-user" style="position:absolute;left:0.9rem;top:50%;transform:translateY(-50%);color:var(--text-muted);"></i>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="ciPhone">Mobile / Contact Number *</label>
-            <div style="position:relative;">
-              <input type="tel" id="ciPhone" class="form-control" placeholder="e.g. +91 98765 43210" required style="padding-left:2.5rem;">
-              <i class="fa-solid fa-phone" style="position:absolute;left:0.9rem;top:50%;transform:translateY(-50%);color:var(--text-muted);"></i>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="ciAdvance">Advance Amount Paid (&#8377;)</label>
-            <div style="position:relative;">
-              <input type="number" id="ciAdvance" class="form-control" value="0" min="0" style="padding-left:2.5rem;">
-              <i class="fa-solid fa-indian-rupee-sign" style="position:absolute;left:0.9rem;top:50%;transform:translateY(-50%);color:var(--text-muted);"></i>
-            </div>
-          </div>
-          <button type="button" class="btn btn-gold" style="width:100%;" onclick="goStep(2)"><i class="fa-solid fa-arrow-right"></i> Next: ID Proof</button>
-        </div>
-
-        <div class="form-step" id="formStep2" style="display:none;">
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
-            <div class="form-group">
-              <label class="form-label" for="ciIdType">ID Proof Type</label>
-              <select id="ciIdType" class="form-select">
-                <option>Aadhaar Card</option>
-                <option>Driving License</option>
-                <option>Passport</option>
-                <option>Voter ID</option>
-                <option>PAN Card</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label class="form-label" for="ciIdNo">ID Proof Number</label>
-              <input type="text" id="ciIdNo" class="form-control" placeholder="XXXX-XXXX-XXXX">
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="ciNotes">Staff Notes (optional)</label>
-            <textarea id="ciNotes" class="form-control" rows="2" placeholder="Special requests, VIP notes, extra amenities…" style="resize:none;"></textarea>
-          </div>
-          <div style="display:flex;gap:0.75rem;">
-            <button type="button" class="btn btn-outline" style="flex:1;" onclick="goStep(1)"><i class="fa-solid fa-arrow-left"></i> Back</button>
-            <button type="button" class="btn btn-gold" style="flex:2;" onclick="goStep(3)"><i class="fa-solid fa-arrow-right"></i> Next: Stay Dates</button>
-          </div>
-        </div>
-
-        <div class="form-step" id="formStep3" style="display:none;">
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
-            <div class="form-group">
-              <label class="form-label" for="ciCheckInDate">Check-In DateTime</label>
-              <input type="datetime-local" id="ciCheckInDate" class="form-control" required onchange="updateBillEstimate()">
-            </div>
-            <div class="form-group">
-              <label class="form-label" for="ciCheckOutDate">Expected Check-Out</label>
-              <input type="datetime-local" id="ciCheckOutDate" class="form-control" required onchange="updateBillEstimate()">
-            </div>
-          </div>
-          <div class="estimated-bill-preview" id="estimatedBillPreview">
-            <i class="fa-solid fa-calculator text-gold"></i>
-            <span id="estimatedBillText">Select dates to see estimate</span>
-          </div>
-          <div style="display:flex;gap:0.75rem;margin-top:0.5rem;">
-            <button type="button" class="btn btn-outline" style="flex:1;" onclick="goStep(2)"><i class="fa-solid fa-arrow-left"></i> Back</button>
-            <button type="submit" class="btn btn-gold" style="flex:2;"><i class="fa-solid fa-check-double"></i> Complete Check-In</button>
-          </div>
-        </div>
-      </form>
+    </a>
+    <ul class="pub-nav-links" id="pubNavLinks">
+      <li><a href="#home" class="nav-link active">Home</a></li>
+      <li><a href="#about" class="nav-link">About</a></li>
+      <li><a href="#packages" class="nav-link">Packages</a></li>
+      <li><a href="#rooms" class="nav-link">Rooms</a></li>
+      <li><a href="#wedding" class="nav-link">Wedding</a></li>
+      <li><a href="#gallery" class="nav-link">Gallery</a></li>
+      <li><a href="#contact" class="nav-link">Contact</a></li>
+    </ul>
+    <div class="pub-nav-actions">
+      <a href="https://wa.me/919022287501" class="btn btn-wa btn-sm" target="_blank"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
+      <a href="admin.html" class="btn btn-outline btn-sm"><i class="fa-solid fa-lock"></i> Admin</a>
+      <button class="hamburger" id="hamburger" aria-label="Menu"><i class="fa-solid fa-bars"></i></button>
     </div>
   </div>
+</nav>
 
-  <!-- CHECK-OUT MODAL -->
-  <div class="modal-backdrop" id="checkOutModal">
-    <div class="modal-box" style="max-width: 680px;">
-      <div class="modal-header">
-        <h3 class="modal-title"><i class="fa-solid fa-receipt text-gold"></i> Guest Check-Out &amp; GST Tax Bill</h3>
-        <button class="btn-close" onclick="closeModal('checkOutModal')" aria-label="Close">&times;</button>
+<!-- HERO SECTION -->
+<section class="hero-section" id="home">
+  <div class="hero-bg">
+    <img src="images/hero.png" alt="Rajodi C Beach Resort" class="hero-img">
+    <div class="hero-overlay"></div>
+  </div>
+  <div class="container hero-content">
+    <div class="hero-badge"><i class="fa-solid fa-location-dot"></i> Nalasopara West, Maharashtra</div>
+    <p class="hero-welcome">Welcome to</p>
+    <h1 class="hero-title">RAJODI C<br>BEACH RESORT</h1>
+    <p class="hero-sub">Beachside Paradise &nbsp;·&nbsp; Waterpark &nbsp;·&nbsp; Premium Rooms &nbsp;·&nbsp; Event Venue</p>
+    <div class="hero-btns">
+      <a href="tel:+919022287501" class="btn btn-gold"><i class="fa-solid fa-phone"></i> Call Us</a>
+      <a href="https://wa.me/919022287501" class="btn btn-wa" target="_blank"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
+    </div>
+  </div>
+  <a href="#about" class="hero-scroll-down" aria-label="Scroll down">
+    <i class="fa-solid fa-chevron-down"></i>
+  </a>
+</section>
+
+<!-- ABOUT SECTION -->
+<section class="pub-section" id="about">
+  <div class="container about-grid">
+    <div class="about-img-wrap reveal">
+      <img src="images/pool.png" alt="Swimming Pool" class="about-img">
+      <div class="about-img-badge">
+        <i class="fa-solid fa-star text-gold"></i>
+        <span>4.5 / 5 Rating</span>
       </div>
-      <div id="checkOutBillContainer"></div>
-      <div style="display:flex;gap:1rem;margin-top:1.5rem;" class="no-print">
-        <button class="btn btn-outline" style="flex:1;" onclick="printInvoice()"><i class="fa-solid fa-print"></i> Print</button>
-        <button class="btn btn-outline" style="flex:1;" onclick="downloadInvoicePDF()"><i class="fa-solid fa-file-pdf"></i> Download PDF</button>
-        <button class="btn btn-success" style="flex:1;" onclick="confirmCheckOutAndFreeRoom()"><i class="fa-solid fa-door-open"></i> Complete Check-Out</button>
+    </div>
+    <div class="about-text reveal">
+      <span class="section-label">About Us</span>
+      <h2 class="section-title">Your Perfect<br><span class="gradient-text-gold">Beach Getaway</span></h2>
+      <p class="about-desc">Nestled on the serene shores of Rajodi Beach, our resort offers an unmatched blend of luxury, adventure, and relaxation. From our thrilling waterpark with 10+ slides to premium AC rooms, world-class dining, and grand event spaces — every moment here is memorable.</p>
+      <div class="stats-grid">
+        <div class="stat-chip"><span class="stat-num" data-target="15">0</span><small>Rooms</small></div>
+        <div class="stat-chip"><span class="stat-num" data-target="10">0</span><small>Water Slides</small></div>
+        <div class="stat-chip"><span class="stat-num" data-target="2500">0</span><small>Event Capacity</small></div>
+        <div class="stat-chip"><span class="stat-num" data-target="4">0</span><small>Star Rating</small></div>
+      </div>
+      <a href="#packages" class="btn btn-gold mt-1">Explore Packages <i class="fa-solid fa-arrow-right"></i></a>
+    </div>
+  </div>
+</section>
+
+<!-- PACKAGES SECTION -->
+<section class="pub-section bg-alt" id="packages">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="section-label">What We Offer</span>
+      <h2 class="section-title">Our <span class="gradient-text-gold">Packages</span></h2>
+      <p class="section-sub">Choose the experience that suits you best</p>
+    </div>
+    <div class="pkg-grid">
+      <div class="pkg-card reveal">
+        <div class="pkg-icon"><i class="fa-solid fa-sun"></i></div>
+        <h3 class="pkg-title">One Day Package</h3>
+        <p class="pkg-time"><i class="fa-solid fa-clock"></i> 9:00 AM – 5:00 PM</p>
+        <ul class="pkg-features">
+          <li><i class="fa-solid fa-check text-gold"></i> Waterpark Slides</li>
+          <li><i class="fa-solid fa-check text-gold"></i> Rain Dance</li>
+          <li><i class="fa-solid fa-check text-gold"></i> Kids Jungle Pool</li>
+          <li><i class="fa-solid fa-check text-gold"></i> DJ Music</li>
+          <li><i class="fa-solid fa-utensils text-gold"></i> Unlimited Breakfast, Lunch (Veg/Non-Veg), Evening Tea</li>
+        </ul>
+        <div class="pkg-price">
+          <div><span class="price-big">₹700</span><span class="price-label">/Adult</span></div>
+          <div><span class="price-big">₹400</span><span class="price-label">/Child (4–10)</span></div>
+        </div>
+        <p class="pkg-note">* GST Extra | T&amp;C Apply</p>
+        <a href="https://wa.me/919022287501?text=I%20want%20to%20book%20One%20Day%20Package" class="btn btn-wa" target="_blank"><i class="fa-brands fa-whatsapp"></i> Book Now</a>
+      </div>
+
+      <div class="pkg-card pkg-featured reveal">
+        <div class="pkg-badge-featured">Most Popular</div>
+        <div class="pkg-icon"><i class="fa-solid fa-moon"></i></div>
+        <h3 class="pkg-title">Overnight Package</h3>
+        <p class="pkg-time"><i class="fa-solid fa-clock"></i> 12:00 PM – 11:00 AM (Next Day)</p>
+        <ul class="pkg-features">
+          <li><i class="fa-solid fa-check text-gold"></i> AC Accommodation</li>
+          <li><i class="fa-solid fa-check text-gold"></i> Lunch &amp; Dinner</li>
+          <li><i class="fa-solid fa-check text-gold"></i> Breakfast &amp; Tea</li>
+          <li><i class="fa-solid fa-check text-gold"></i> Waterpark Access</li>
+          <li><i class="fa-solid fa-users text-gold"></i> Group Booking Only</li>
+        </ul>
+        <div class="pkg-price">
+          <div><span class="price-big">₹1700</span><span class="price-label">/Adult</span></div>
+          <div><span class="price-big">₹1000</span><span class="price-label">/Child (4–10)</span></div>
+        </div>
+        <p class="pkg-note">* GST Extra | T&amp;C Apply</p>
+        <a href="https://wa.me/919022287501?text=I%20want%20to%20book%20Overnight%20Package" class="btn btn-gold" target="_blank"><i class="fa-brands fa-whatsapp"></i> Book Now</a>
+      </div>
+      <div class="pkg-card reveal">
+        <div class="pkg-icon"><i class="fa-solid fa-heart"></i></div>
+        <h3 class="pkg-title">Couple Package</h3>
+        <p class="pkg-time"><i class="fa-solid fa-clock"></i> 24 Hours (18+ ID Required)</p>
+        <ul class="pkg-features">
+          <li><i class="fa-solid fa-check text-gold"></i> Deluxe Room Stay</li>
+          <li><i class="fa-solid fa-check text-gold"></i> Meals Included</li>
+          <li><i class="fa-solid fa-check text-gold"></i> Waterpark Access</li>
+          <li><i class="fa-solid fa-check text-gold"></i> Private Amenities</li>
+        </ul>
+        <div class="pkg-price">
+          <div><span class="price-big">₹4500</span><span class="price-label">Deluxe</span></div>
+          <div><span class="price-range">₹4500 – ₹6500</span><span class="price-label"> (Room Dependent)</span></div>
+        </div>
+        <p class="pkg-note">* GST Extra | T&amp;C Apply</p>
+        <a href="https://wa.me/919022287501?text=I%20want%20to%20book%20Couple%20Package" class="btn btn-wa" target="_blank"><i class="fa-brands fa-whatsapp"></i> Book Now</a>
       </div>
     </div>
   </div>
+</section>
 
-  <!-- ACTIVITY LOG MODAL -->
-  <div class="modal-backdrop" id="activityLogModal">
-    <div class="modal-box" style="max-width: 640px;">
-      <div class="modal-header">
-        <h3 class="modal-title"><i class="fa-solid fa-list-check text-gold"></i> Activity Log</h3>
-        <button class="btn-close" onclick="closeModal('activityLogModal')" aria-label="Close">&times;</button>
-      </div>
-      <div id="activityLogList" class="activity-log-list"></div>
-      <button class="btn btn-danger btn-sm" style="margin-top:1rem;width:100%;" onclick="clearActivityLog()">
-        <i class="fa-solid fa-trash"></i> Clear Log
-      </button>
+<!-- ROOMS SECTION -->
+<section class="pub-section" id="rooms">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="section-label">Accommodations</span>
+      <h2 class="section-title">Our <span class="gradient-text-gold">Rooms</span></h2>
+      <p class="section-sub">Premium accommodations for every occasion · Food Not Included with Room Package</p>
     </div>
-  </div>
-
-  <!-- ROOM NOTES MODAL -->
-  <div class="modal-backdrop" id="roomNotesModal">
-    <div class="modal-box" style="max-width: 480px;">
-      <div class="modal-header">
-        <h3 class="modal-title"><i class="fa-solid fa-note-sticky text-gold"></i> Staff Notes &#8212; Room <span id="notesRoomNumber"></span></h3>
-        <button class="btn-close" onclick="closeModal('roomNotesModal')" aria-label="Close">&times;</button>
-      </div>
-      <input type="hidden" id="notesRoomId">
-      <textarea id="roomNotesTextarea" class="form-control" rows="5" placeholder="Add notes for this room (maintenance needed, VIP guest, extra towels)…" style="resize:vertical;"></textarea>
-      <button class="btn btn-gold" style="width:100%;margin-top:1rem;" onclick="saveRoomNotes()">
-        <i class="fa-solid fa-floppy-disk"></i> Save Notes
-      </button>
-    </div>
-  </div>
-
-  <!-- DAY END SUMMARY MODAL -->
-  <div class="modal-backdrop" id="dayEndSummaryModal">
-    <div class="modal-box" style="max-width: 720px;">
-      <div class="modal-header">
-        <h3 class="modal-title"><i class="fa-solid fa-file-invoice-dollar text-gold"></i> Day End Summary Report</h3>
-        <button class="btn-close" onclick="closeModal('dayEndSummaryModal')" aria-label="Close">&times;</button>
-      </div>
-      <div id="dayEndSummaryContent" style="max-height: 400px; overflow-y: auto; margin-bottom: 1rem;">
-        <!-- Summary table goes here -->
-      </div>
-      <div style="display:flex;gap:1rem;margin-top:1.5rem;" class="no-print">
-        <button class="btn btn-outline" style="flex:1;" onclick="printInvoice()"><i class="fa-solid fa-print"></i> Print Report</button>
-        <button class="btn btn-danger" style="flex:1;" onclick="clearDailyTransactions()"><i class="fa-solid fa-trash"></i> Clear Transactions</button>
-        <button class="btn btn-gold" style="flex:2;" onclick="confirmLockSystem()"><i class="fa-solid fa-lock"></i> Confirm Lock & Logout</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- CONTACT FOOTER -->
-  <footer class="site-footer">
-    <div class="container footer-inner">
-      <div class="footer-brand">
-        <div class="brand-icon-wrap" style="width:2.4rem;height:2.4rem;font-size:1rem;"><i class="fa-solid fa-umbrella-beach"></i></div>
-        <span>RAJODI C BEACH RESORT</span>
-      </div>
-      <div class="footer-contact-grid">
-        <div class="footer-contact-item">
-          <i class="fa-solid fa-location-dot"></i>
-          <span>Last Stop, Rajodi Beach, OAC N Rd, Rajodi,<br>Nalasopara West, Maharashtra 401304</span>
+    <div class="rooms-grid">
+      <!-- Deluxe Room -->
+      <div class="room-card reveal">
+        <div class="room-img-wrap">
+          <img src="images/deluxe.png" alt="Deluxe Room" class="room-img">
+          <div class="room-price-pill">₹3,000 + GST</div>
         </div>
-        <div class="footer-contact-item">
-          <i class="fa-solid fa-phone"></i>
-          <span>
-            <a href="tel:+919022287501">+91 90222 87501</a><br>
-            <a href="tel:+918806307706">+91 88063 07706</a>
-          </span>
-        </div>
-        <div class="footer-contact-item">
-          <i class="fa-solid fa-envelope"></i>
-          <a href="mailto:rajodibresort@gmail.com">rajodibresort@gmail.com</a>
+        <div class="room-body">
+          <div class="room-header">
+            <h3 class="room-name">Deluxe Room</h3>
+            <span class="room-rooms">Rooms 101–105</span>
+          </div>
+          <div class="room-meta">
+            <span><i class="fa-solid fa-user-group"></i> 2 Persons</span>
+            <span><i class="fa-solid fa-right-to-bracket"></i> Check-in: 12PM</span>
+            <span><i class="fa-solid fa-right-from-bracket"></i> Check-out: 11AM</span>
+          </div>
+          <ul class="room-amenities">
+            <li><i class="fa-solid fa-snowflake"></i> AC</li>
+            <li><i class="fa-solid fa-wifi"></i> WiFi</li>
+            <li><i class="fa-solid fa-car"></i> Free Parking</li>
+            <li><i class="fa-solid fa-water-ladder"></i> Pool Access</li>
+            <li><i class="fa-solid fa-mug-hot"></i> Morning Tea/Coffee</li>
+          </ul>
+          <p class="room-note"><i class="fa-solid fa-circle-info"></i> Food Not Included</p>
+          <a href="https://wa.me/919022287501?text=I%20would%20like%20to%20book%20the%20Deluxe%20Room" class="btn btn-gold" style="width:100%;" target="_blank"><i class="fa-brands fa-whatsapp"></i> Book Now</a>
         </div>
       </div>
-      <div class="footer-copy">&copy; 2025 Rajodi C Beach Resort. All rights reserved.</div>
-    </div>
-  </footer>
 
-  <script src="app.js"></script>
+      <!-- Super Deluxe Room -->
+      <div class="room-card reveal">
+        <div class="room-img-wrap">
+          <img src="images/super_deluxe.png" alt="Super Deluxe Room" class="room-img">
+          <div class="room-price-pill">₹3,500 + GST</div>
+        </div>
+        <div class="room-body">
+          <div class="room-header">
+            <h3 class="room-name">Super Deluxe Room</h3>
+            <span class="room-rooms">Rooms 201–205</span>
+          </div>
+          <div class="room-meta">
+            <span><i class="fa-solid fa-user-group"></i> 2 Persons</span>
+            <span><i class="fa-solid fa-right-to-bracket"></i> Check-in: 12PM</span>
+            <span><i class="fa-solid fa-right-from-bracket"></i> Check-out: 11AM</span>
+          </div>
+          <ul class="room-amenities">
+            <li><i class="fa-solid fa-snowflake"></i> AC</li>
+            <li><i class="fa-solid fa-wifi"></i> WiFi</li>
+            <li><i class="fa-solid fa-car"></i> Parking</li>
+            <li><i class="fa-solid fa-fire-flame-curved"></i> 24hr Hot Water</li>
+            <li><i class="fa-solid fa-tv"></i> TV</li>
+            <li><i class="fa-solid fa-water-ladder"></i> Pool Access</li>
+          </ul>
+          <a href="https://wa.me/919022287501?text=I%20would%20like%20to%20book%20the%20Super%20Deluxe%20Room" class="btn btn-gold" style="width:100%;" target="_blank"><i class="fa-brands fa-whatsapp"></i> Book Now</a>
+        </div>
+      </div>
+      <!-- Executive Room -->
+      <div class="room-card reveal">
+        <div class="room-img-wrap room-slider-wrap" id="execSlider">
+          <img src="images/executive.png" alt="Executive Room" class="room-img room-slide active-slide" data-idx="0">
+          <img src="images/executive_balcony_1.jpg" alt="Executive Balcony" class="room-img room-slide" data-idx="1">
+          <img src="images/executive_balcony_2.jpg" alt="Executive Balcony 2" class="room-img room-slide" data-idx="2">
+          <img src="images/executive_balcony_3.jpg" alt="Executive Balcony 3" class="room-img room-slide" data-idx="3">
+          <button class="slider-btn slider-prev" onclick="slideRoom(-1, 'execSlider')" aria-label="Previous"><i class="fa-solid fa-chevron-left"></i></button>
+          <button class="slider-btn slider-next" onclick="slideRoom(1, 'execSlider')" aria-label="Next"><i class="fa-solid fa-chevron-right"></i></button>
+          <div class="slider-dots" id="execDots">
+            <span class="slider-dot active" onclick="goSlide(0,'execSlider')"></span>
+            <span class="slider-dot" onclick="goSlide(1,'execSlider')"></span>
+            <span class="slider-dot" onclick="goSlide(2,'execSlider')"></span>
+            <span class="slider-dot" onclick="goSlide(3,'execSlider')"></span>
+          </div>
+          <div class="room-price-pill">₹5,000 + GST</div>
+        </div>
+        <div class="room-body">
+          <div class="room-header">
+            <h3 class="room-name">Executive Room with Balcony</h3>
+            <span class="room-rooms">Rooms 301–305</span>
+          </div>
+          <div class="room-meta">
+            <span><i class="fa-solid fa-user-group"></i> 2 Persons</span>
+            <span><i class="fa-solid fa-right-to-bracket"></i> Check-in: 12PM</span>
+            <span><i class="fa-solid fa-right-from-bracket"></i> Check-out: 11AM</span>
+          </div>
+          <ul class="room-amenities">
+            <li><i class="fa-solid fa-snowflake"></i> AC</li>
+            <li><i class="fa-solid fa-mountain-sun"></i> Balcony View</li>
+            <li><i class="fa-solid fa-wifi"></i> WiFi</li>
+            <li><i class="fa-solid fa-fire-flame-curved"></i> Hot Water</li>
+            <li><i class="fa-solid fa-tv"></i> TV</li>
+            <li><i class="fa-solid fa-water-ladder"></i> Pool Access</li>
+          </ul>
+          <a href="https://wa.me/919022287501?text=I%20would%20like%20to%20book%20the%20Executive%20Room" class="btn btn-gold" style="width:100%;" target="_blank"><i class="fa-brands fa-whatsapp"></i> Book Now</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AMENITIES TICKER -->
+<div class="amenities-ticker">
+  <div class="ticker-track">
+    <span><i class="fa-solid fa-ring"></i> Destination Wedding</span>
+    <span><i class="fa-solid fa-water-ladder"></i> Swimming Pool</span>
+    <span><i class="fa-solid fa-wifi"></i> Free WiFi</span>
+    <span><i class="fa-solid fa-shield-halved"></i> 24/7 Security</span>
+    <span><i class="fa-solid fa-utensils"></i> Veg / Non-Veg Unlimited</span>
+    <span><i class="fa-solid fa-person-swimming"></i> 10+ Water Slides</span>
+    <span><i class="fa-solid fa-snowflake"></i> AC Rooms</span>
+    <span><i class="fa-solid fa-umbrella-beach"></i> Beach Resort</span>
+    <span><i class="fa-solid fa-tv"></i> Smart TV</span>
+    <span><i class="fa-solid fa-car"></i> Free Parking</span>
+    <span><i class="fa-solid fa-children"></i> Kids Play Area</span>
+    <span><i class="fa-solid fa-music"></i> DJ Music</span>
+    <!-- duplicate for seamless loop -->
+    <span><i class="fa-solid fa-ring"></i> Destination Wedding</span>
+    <span><i class="fa-solid fa-water-ladder"></i> Swimming Pool</span>
+    <span><i class="fa-solid fa-wifi"></i> Free WiFi</span>
+    <span><i class="fa-solid fa-shield-halved"></i> 24/7 Security</span>
+    <span><i class="fa-solid fa-utensils"></i> Veg / Non-Veg Unlimited</span>
+    <span><i class="fa-solid fa-person-swimming"></i> 10+ Water Slides</span>
+    <span><i class="fa-solid fa-snowflake"></i> AC Rooms</span>
+    <span><i class="fa-solid fa-umbrella-beach"></i> Beach Resort</span>
+    <span><i class="fa-solid fa-tv"></i> Smart TV</span>
+    <span><i class="fa-solid fa-car"></i> Free Parking</span>
+  </div>
+</div>
+
+<!-- WEDDING SECTION -->
+<section class="pub-section bg-alt" id="wedding">
+  <div class="container wedding-grid">
+    <div class="wedding-text reveal">
+      <span class="section-label">Celebrate in Style</span>
+      <h2 class="section-title">Destination Wedding<br><span class="gradient-text-gold">&amp; Events</span></h2>
+      <p class="about-desc">Rajodi C Beach Resort is the perfect destination for your dream wedding. With stunning beach and garden settings, luxurious accommodations, and exceptional service, we offer everything you need for a magical celebration.</p>
+      <div class="wedding-capacity">
+        <i class="fa-solid fa-people-group text-gold" style="font-size:1.5rem;"></i>
+        <div><strong style="color:#fff;font-size:1.4rem;">350 – 2,500</strong><br><span style="color:var(--text-muted);font-size:0.85rem;">People Capacity</span></div>
+      </div>
+      <ul class="wedding-features">
+        <li><i class="fa-solid fa-check-circle text-gold"></i> Special room rates for wedding guests &amp; family</li>
+        <li><i class="fa-solid fa-check-circle text-gold"></i> Professional sound system for ceremony music</li>
+        <li><i class="fa-solid fa-check-circle text-gold"></i> Exclusive garden area for ceremony &amp; reception</li>
+        <li><i class="fa-solid fa-check-circle text-gold"></i> Customizable decorations &amp; seating arrangements</li>
+        <li><i class="fa-solid fa-check-circle text-gold"></i> Full catering &amp; décor services available</li>
+      </ul>
+      <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:1.5rem;">
+        <a href="https://wa.me/918600823522?text=I%20want%20to%20enquire%20for%20wedding%20booking" class="btn btn-gold" target="_blank"><i class="fa-brands fa-whatsapp"></i> Enquire Now</a>
+        <a href="#contact" class="btn btn-outline">Read More <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+    </div>
+    <div class="wedding-card-wrap reveal">
+      <div class="wedding-card">
+        <div class="wedding-card-icon"><i class="fa-solid fa-ring"></i></div>
+        <h4>Dream Wedding Venue</h4>
+        <p>Beach, Garden &amp; Indoor spaces for every occasion</p>
+        <div class="wedding-tags">
+          <span>Engagement</span><span>Wedding</span><span>Reception</span>
+          <span>Birthday</span><span>Corporate</span><span>Anniversary</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY SECTION -->
+<section class="pub-section" id="gallery">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="section-label">Visual Tour</span>
+      <h2 class="section-title">Our <span class="gradient-text-gold">Gallery</span></h2>
+    </div>
+    <div class="gallery-filters reveal">
+      <button class="gal-filter active" data-filter="all">All</button>
+      <button class="gal-filter" data-filter="pool">Pool &amp; Waterpark</button>
+      <button class="gal-filter" data-filter="rooms">Rooms</button>
+      <button class="gal-filter" data-filter="resort">Resort</button>
+    </div>
+    <div class="gallery-grid" id="galleryGrid">
+      <div class="gal-item" data-cat="pool" onclick="openLightbox(this)"><img src="images/pool.png" alt="Swimming Pool"><div class="gal-overlay"><i class="fa-solid fa-expand"></i></div></div>
+      <div class="gal-item" data-cat="resort" onclick="openLightbox(this)"><img src="images/hero.png" alt="Resort View"><div class="gal-overlay"><i class="fa-solid fa-expand"></i></div></div>
+      <div class="gal-item" data-cat="rooms" onclick="openLightbox(this)"><img src="images/deluxe.png" alt="Deluxe Room"><div class="gal-overlay"><i class="fa-solid fa-expand"></i></div></div>
+      <div class="gal-item" data-cat="rooms" onclick="openLightbox(this)"><img src="images/super_deluxe.png" alt="Super Deluxe Room"><div class="gal-overlay"><i class="fa-solid fa-expand"></i></div></div>
+      <div class="gal-item" data-cat="rooms" onclick="openLightbox(this)"><img src="images/executive.png" alt="Executive Room"><div class="gal-overlay"><i class="fa-solid fa-expand"></i></div></div>
+      <div class="gal-item" data-cat="rooms" onclick="openLightbox(this)"><img src="images/executive_balcony_1.jpg" alt="Executive Balcony"><div class="gal-overlay"><i class="fa-solid fa-expand"></i></div></div>
+      <div class="gal-item" data-cat="rooms" onclick="openLightbox(this)"><img src="images/executive_balcony_2.jpg" alt="Balcony View"><div class="gal-overlay"><i class="fa-solid fa-expand"></i></div></div>
+      <div class="gal-item" data-cat="rooms" onclick="openLightbox(this)"><img src="images/executive_balcony_3.jpg" alt="Balcony View 2"><div class="gal-overlay"><i class="fa-solid fa-expand"></i></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()" aria-label="Close">&times;</button>
+  <img src="" alt="" class="lightbox-img" id="lightboxImg">
+</div>
+
+<!-- REVIEWS SECTION -->
+<section class="pub-section bg-alt" id="reviews">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="section-label">Guest Testimonials</span>
+      <h2 class="section-title">What Our <span class="gradient-text-gold">Guests Say</span></h2>
+    </div>
+    <div class="review-carousel-wrap">
+      <button class="review-nav rev-prev" id="revPrev" aria-label="Previous"><i class="fa-solid fa-chevron-left"></i></button>
+      <div class="review-carousel" id="reviewCarousel">
+        <div class="review-card active-review">
+          <div class="review-stars">★★★★☆</div>
+          <p class="review-text">"Rooms are avg good, dining area is also spacious, service needs improvement. Pool area and slides were maintained. Food quality was good. They provided milk and cooked our raw rice for kids. Over all good experience."</p>
+          <div class="review-author"><div class="review-avatar">MB</div><div><strong>Mayur Bhanushali</strong><small>Google Review</small></div></div>
+        </div>
+        <div class="review-card">
+          <div class="review-stars">★★★★☆</div>
+          <p class="review-text">"Two separate pools with slides, bucket splash, good rooms with pool view, food is okay, just it is in interior — beach is walkable distance."</p>
+          <div class="review-author"><div class="review-avatar">BF</div><div><strong>Bonnie Fernandes</strong><small>Google Review</small></div></div>
+        </div>
+        <div class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <p class="review-text">"A very nice n neat resort for family outing. We all had a great time here. Hygiene was very well maintained. Food was freshly made and served. One pool is specially designed for kids with a variety of slides. Staff members were very cooperative."</p>
+          <div class="review-author"><div class="review-avatar">PD</div><div><strong>Priyanka Dabre</strong><small>Google Review</small></div></div>
+        </div>
+        <div class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <p class="review-text">"Location - Room - Hotel Ambience is good... Owner young Gentleman is also very cooperative, only food can be improved. It's good but lot of scope for improvement. Overall Good place to stay &amp; enjoy with family and friends."</p>
+          <div class="review-author"><div class="review-avatar">SR</div><div><strong>Sagar Raorane</strong><small>Google Review</small></div></div>
+        </div>
+      </div>
+      <button class="review-nav rev-next" id="revNext" aria-label="Next"><i class="fa-solid fa-chevron-right"></i></button>
+    </div>
+    <div class="review-dots" id="reviewDots">
+      <span class="rev-dot active"></span><span class="rev-dot"></span><span class="rev-dot"></span><span class="rev-dot"></span>
+    </div>
+    <div style="text-align:center;margin-top:1.75rem;">
+      <a href="https://maps.app.goo.gl/azVkMkPc6maHm91v8" class="btn btn-outline" target="_blank"><i class="fa-brands fa-google"></i> Leave a Review</a>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT SECTION -->
+<section class="pub-section" id="contact">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="section-label">Get In Touch</span>
+      <h2 class="section-title">Contact <span class="gradient-text-gold">Us</span></h2>
+    </div>
+    <div class="contact-grid">
+      <div class="contact-info reveal">
+        <div class="contact-item">
+          <div class="contact-icon"><i class="fa-solid fa-location-dot"></i></div>
+          <div><strong>Address</strong><p>Last Stop, Rajodi Beach, OAC N Rd, Rajodi,<br>Nalasopara West, Maharashtra 401304</p></div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon"><i class="fa-solid fa-phone"></i></div>
+          <div><strong>Phone</strong>
+            <p><a href="tel:+919022287501">+91 90222 87501</a><br><a href="tel:+918806307706">+91 88063 07706</a></p>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon"><i class="fa-solid fa-envelope"></i></div>
+          <div><strong>Email</strong><p><a href="mailto:rajodibresort@gmail.com">rajodibresort@gmail.com</a></p></div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon"><i class="fa-solid fa-share-nodes"></i></div>
+          <div><strong>Social Media</strong>
+            <div class="social-row">
+              <a href="https://www.facebook.com/rajodibeachresort/" target="_blank" class="social-icon fb"><i class="fa-brands fa-facebook-f"></i></a>
+              <a href="https://www.instagram.com/rajodi_beach_resort/" target="_blank" class="social-icon ig"><i class="fa-brands fa-instagram"></i></a>
+              <a href="https://wa.me/919022287501" target="_blank" class="social-icon wa"><i class="fa-brands fa-whatsapp"></i></a>
+            </div>
+          </div>
+        </div>
+        <div class="contact-form-wrap">
+          <h4 style="color:#fff;margin-bottom:1rem;">Quick Enquiry</h4>
+          <div class="form-group">
+            <input type="text" id="cName" class="form-control" placeholder="Your Name">
+          </div>
+          <div class="form-group">
+            <input type="tel" id="cPhone" class="form-control" placeholder="Your Phone Number">
+          </div>
+          <div class="form-group">
+            <textarea id="cMsg" class="form-control" rows="3" placeholder="Your message or booking enquiry…" style="resize:none;"></textarea>
+          </div>
+          <button class="btn btn-wa" style="width:100%;" onclick="sendContactWA()"><i class="fa-brands fa-whatsapp"></i> Send via WhatsApp</button>
+        </div>
+      </div>
+      <div class="contact-map reveal">
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3760.837928455637!2d72.79763657592!3d19.41850778187!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7af07fa2f04e5%3A0x1a99ac4e24fa50a0!2sRajodi%20C%20Beach%20Resort%20%26%20Waterpark!5e0!3m2!1sen!2sin!4v1699999999999!5m2!1sen!2sin"
+          width="100%" height="100%" style="border:0;border-radius:16px;" allowfullscreen loading="lazy">
+        </iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="pub-footer">
+  <div class="container footer-inner-pub">
+    <div class="footer-col footer-brand-col">
+      <div style="display:flex;align-items:center;gap:0.85rem;margin-bottom:1rem;">
+        <div class="brand-icon-wrap"><i class="fa-solid fa-umbrella-beach"></i></div>
+        <span class="brand-name" style="font-size:1rem;">RAJODI C BEACH RESORT</span>
+      </div>
+      <p style="color:var(--text-muted);font-size:0.88rem;line-height:1.7;">Whether you're looking to relax on the beach, enjoy an adventure-filled day at the waterpark, or celebrate a special occasion — we have something for everyone.</p>
+      <div class="social-row mt-1">
+        <a href="https://www.facebook.com/rajodibeachresort/" target="_blank" class="social-icon fb"><i class="fa-brands fa-facebook-f"></i></a>
+        <a href="https://www.instagram.com/rajodi_beach_resort/" target="_blank" class="social-icon ig"><i class="fa-brands fa-instagram"></i></a>
+        <a href="https://wa.me/919022287501" target="_blank" class="social-icon wa"><i class="fa-brands fa-whatsapp"></i></a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h5 class="footer-col-title">Quick Links</h5>
+      <ul class="footer-links">
+        <li><a href="#home">Home</a></li>
+        <li><a href="#packages">Packages &amp; Rooms</a></li>
+        <li><a href="#wedding">Wedding &amp; Events</a></li>
+        <li><a href="#gallery">Gallery</a></li>
+        <li><a href="#contact">Contact Us</a></li>
+        <li><a href="https://wa.me/918806307706" target="_blank">Make Booking</a></li>
+        <li><a href="https://maps.app.goo.gl/azVkMkPc6maHm91v8" target="_blank">Locate Us</a></li>
+        <li><a href="admin.html">Admin Portal</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5 class="footer-col-title">Contact Info</h5>
+      <div class="footer-contact-list">
+        <div><i class="fa-solid fa-location-dot text-gold"></i><span>Last Stop, Rajodi Beach, OAC N Rd,<br>Nalasopara West, MH 401304</span></div>
+        <div><i class="fa-solid fa-phone text-gold"></i><span><a href="tel:+919022287501">+91 90222 87501</a><br><a href="tel:+918806307706">+91 88063 07706</a></span></div>
+        <div><i class="fa-solid fa-envelope text-gold"></i><span><a href="mailto:rajodibresort@gmail.com">rajodibresort@gmail.com</a></span></div>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 Rajodi C Beach Resort &amp; Waterpark. All rights reserved.</p>
+  </div>
+</footer>
+
+<script src="app.js"></script>
 </body>
 </html>
